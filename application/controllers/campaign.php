@@ -908,17 +908,24 @@ class Campaign extends CI_Controller {
 	        		*/
 	    			if ($component == 'full-scan' || $component == 'all' || $component == 'download') {
 
-	    				if(!($status['http_code'] == 200)) {
+                        if (!empty($url_override)) {
+                            if ($this->environment == 'terminal' OR $this->environment == 'cron') {
+                                echo 'Skipping download because custom URL was provided' . PHP_EOL;
+                            }
+                        } else if(!($status['http_code'] == 200)) {
 
 		    				if ($this->environment == 'terminal' OR $this->environment == 'cron') {
 		    					echo 'Resource ' . $real_url . ' not available' . PHP_EOL;
 		    				}
 
 	    					continue;
-	    				}
+                            
+	    				} else {
 
-	    				// download and version this data.json file.
-	    				$datajson_archive_status = $this->campaign->archive_file('datajson', $office->id, $real_url);
+                            // download and version this data.json file.
+                            $datajson_archive_status = $this->campaign->archive_file('datajson', $office->id, $real_url);
+
+                        }
 
 	    			}
 
